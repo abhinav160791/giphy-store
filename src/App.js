@@ -1,23 +1,34 @@
-import logo from './logo.svg';
+import Header from "./components/Header";
+
+import { Grid } from '@giphy/react-components'
+import { GiphyFetch } from '@giphy/js-fetch-api'
+import { useState } from 'react';
+
 import './App.css';
 
+const gf = new GiphyFetch('8qckunS2ykbnSixfa48q26shsZG2OWMM')
+
 function App() {
+  const [showSearchGrid, setShowSearchGrid] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const fetchTrendingGifs = (offset) => gf.trending({ offset, limit: 20 })
+
+  const fetchSearchGifs = (offset) => gf.search(searchTerm, { offset, limit: 20 })
+
+  const showNewSearchGifs = () => {
+    setShowSearchGrid(true)
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header setSearchTerm={setSearchTerm} setShowSearchGrid={setShowSearchGrid} showNewSearchGifs={showNewSearchGifs}/>
+      <div className="trending_grids_wrapper is-flex is-justify-centered">
+        {!showSearchGrid && <Grid width={1280} columns={4} fetchGifs={fetchTrendingGifs} noLink={true}/>}
+      </div>
+      <div className="search_grids_wrapper is-flex is-justify-centered">
+        {showSearchGrid && <Grid width={1280} columns={4} fetchGifs={fetchSearchGifs} noLink={true}/>}
+      </div>
     </div>
   );
 }
